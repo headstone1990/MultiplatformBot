@@ -1,6 +1,6 @@
-﻿using VkBot;
+﻿using VkBot.Models;
 
-namespace VKBotOld.Commands
+namespace VkBot.Commands
 {
     public class GetLastCommands : Command
     {

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AngularTest.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using VkNet.Abstractions;
 using VkNet.Model;
 using VkNet.Model.RequestParams;
 using VkNet.Utils;
+using Chat = VkBot.Models.Chat;
 
 namespace VkBot.Controllers
 {

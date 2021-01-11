@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
-using VKBotOld.Commands;
+using VkBot.Commands;
 using VkNet.Model;
 
-namespace VkBot
+namespace VkBot.Models
 {
     public class Chat
     {

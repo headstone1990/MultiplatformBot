@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace AngularTest.Controllers
+namespace VkBot.Controllers
 {
     [Serializable]
     public class Updates
