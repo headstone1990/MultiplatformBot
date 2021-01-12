@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace VkBot.Models
+namespace MultiplatformBot.Models
 {
     public class ApplicationContext : DbContext
     {

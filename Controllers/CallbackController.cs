@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using MultiplatformBot.Models;
 using VkNet.Abstractions;
 using VkNet.Model;
 using VkNet.Model.RequestParams;
 using VkNet.Utils;
-using Chat = VkBot.Models.Chat;
 
-namespace VkBot.Controllers
+namespace MultiplatformBot.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -25,7 +25,7 @@ namespace VkBot.Controllers
             this.vkApi = vkApi;
         }
 
-        private List<Chat> chats = new();
+        private List<VkConversation> chats = new();
 
         [HttpPost]
         public IActionResult Callback([FromBody] Updates updates)
@@ -47,7 +47,7 @@ namespace VkBot.Controllers
                     {
                        if (chats.All(chat => chat.Id != message.PeerId))
                        {
-                           chats.Add(new Chat(message.PeerId.GetValueOrDefault()));
+                           chats.Add(new VkConversation(message.PeerId.GetValueOrDefault()));
                        }
 
                        ParseMessage(message);
@@ -72,6 +72,10 @@ namespace VkBot.Controllers
         {
             var text = message.Text.Trim();
             var chat = chats.FirstOrDefault(e => e.Id == message.PeerId);
+            if (string.IsNullOrEmpty(text))
+            {
+                return;
+            }
             if (text[0] == '!')
             {
                 chat?.AddCommand(message);

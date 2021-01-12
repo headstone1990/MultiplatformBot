@@ -1,16 +1,16 @@
-﻿using VkBot.Models;
+﻿using MultiplatformBot.Models;
 
-namespace VkBot.Commands
+namespace MultiplatformBot.Commands
 {
     public sealed class Test : Command
     {
-        public Test(Chat chat, string arguments)
+        public Test(VkConversation vkConversation, string arguments)
         {
-            Chat = chat;
+            VkConversation = vkConversation;
             Arguments = arguments;
         }
 
-        public override Chat Chat { get; set; }
+        public override VkConversation VkConversation { get; set; }
         public override string Arguments { get; set; }
         public override void Execute()
         {

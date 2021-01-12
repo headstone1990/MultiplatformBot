@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using VkBot.Models;
+using MultiplatformBot.Models;
 
-namespace VkBot.Controllers
+namespace MultiplatformBot.Controllers
 {
     [Route("api/products")]
     [ApiController]
