@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace VkBot
+namespace MultiplatformBot
 {
     public static class ExtensionMethods
     {

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
-using VkBot.Commands;
+using MultiplatformBot.Commands;
 using VkNet.Model;
 
-namespace VkBot.Models
+namespace MultiplatformBot.Models
 {
-    public class Chat
+    public class VkConversation
     {
-        public Chat(long id)
+        public VkConversation(long id)
         {
             Id = id;
             messages = new LinkedList<Message>();

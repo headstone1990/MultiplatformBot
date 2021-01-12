@@ -1,10 +1,10 @@
-﻿using VkBot.Models;
+﻿using MultiplatformBot.Models;
 
-namespace VkBot.Commands
+namespace MultiplatformBot.Commands
 {
     public class GetLastCommands : Command
     {
-        public override Chat Chat { get; set; }
+        public override VkConversation VkConversation { get; set; }
         public override string Arguments { get; set; }
         public override void Execute()
         {

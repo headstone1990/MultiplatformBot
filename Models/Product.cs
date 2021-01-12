@@ -1,4 +1,4 @@
-﻿namespace VkBot.Models
+﻿namespace MultiplatformBot.Models
 {
     public class Product
     {

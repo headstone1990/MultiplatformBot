@@ -1,10 +1,10 @@
-﻿using VkBot.Models;
+﻿using MultiplatformBot.Models;
 
-namespace VkBot.Commands
+namespace MultiplatformBot.Commands
 {
     public abstract class Command
     {
-        public abstract Chat Chat { get; set; }
+        public abstract VkConversation VkConversation { get; set; }
         public abstract string Arguments { get; set; }
         
         

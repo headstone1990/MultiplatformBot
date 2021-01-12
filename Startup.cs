@@ -10,12 +10,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using VkBot.Models;
+using MultiplatformBot.Models;
 using VkNet;
 using VkNet.Abstractions;
 using VkNet.Model;
 
-namespace VkBot
+namespace MultiplatformBot
 {
     public class Startup
     {
