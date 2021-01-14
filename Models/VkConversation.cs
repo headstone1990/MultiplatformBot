@@ -1,26 +1,29 @@
 ﻿using System.Collections.Generic;
-using MultiplatformBot.Commands;
+using MultiplatformBot.Models.Commands.Vk;
 using VkNet.Model;
 
 namespace MultiplatformBot.Models
 {
-    public class VkConversation
+    public sealed class VkConversation : Conversation
     {
-        public VkConversation(long id)
+        
+        public VkConversation(long vkId)
         {
-            Id = id;
-            messages = new LinkedList<Message>();
-            commands = new LinkedList<Message>();
+            VkId = vkId;
+            messages = new LinkedList<VkNet.Model.Message>();
+            commands = new LinkedList<VkNet.Model.Message>();
         }
 
-        public long Id { get; }
+        public override int Id { get; protected init; }
 
-        private LinkedList<Message> messages;
-        private LinkedList<Message> commands;
+        public long VkId { get; private init; }
 
-        private Conversation conversation;
+        private LinkedList<VkNet.Model.Message> messages;
+        private LinkedList<VkNet.Model.Message> commands;
 
-        public void AddMessage(Message message)
+
+
+        public void AddMessage(VkNet.Model.Message message)
         {
             messages.AddFirst(message);
             if (messages.Count > 100)
@@ -29,7 +32,7 @@ namespace MultiplatformBot.Models
             }
         }
         
-        public void AddCommand(Message command)
+        public void AddCommand(VkNet.Model.Message command)
         {
             ParseCommand(command);
                 commands.AddFirst(command);
@@ -39,11 +42,11 @@ namespace MultiplatformBot.Models
             }
         }
 
-        private void ParseCommand(Message command)
+        private void ParseCommand(VkNet.Model.Message command)
         {
             if (command.Text == "!test")
             {
-                var commandInstance = new Test(this, command.Text);
+                var commandInstance = new Test(command.Text);
                 commandInstance.Execute();
             }
             else if(command.Text.Contains("GetLastCommands"))
@@ -55,5 +58,6 @@ namespace MultiplatformBot.Models
                 AddMessage(command);
             }
         }
+        
     }
 }

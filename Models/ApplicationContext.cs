@@ -6,10 +6,12 @@ namespace MultiplatformBot.Models
     {
         public ApplicationContext(DbContextOptions<ApplicationContext> options) 
             : base(options)
-        { 
+        {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
- 
-        public DbSet<Product> Products { get; set; }
+        
+        
+        public DbSet<VkConversation> VkConversations { get; set; }
     }
 }

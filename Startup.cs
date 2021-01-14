@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.OpenApi.Models;
 using MultiplatformBot.Models;
 using VkNet;
 using VkNet.Abstractions;
@@ -38,7 +39,6 @@ namespace MultiplatformBot
 
             services.AddControllers();
             services.AddControllers().AddNewtonsoftJson();
-            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
             services.AddSingleton<IVkApi>(sp =>
             {
                 var api = new VkApi();
@@ -47,6 +47,10 @@ namespace MultiplatformBot
                     AccessToken = Configuration["Config:AccessToken"]
                 });
                 return api;
+            });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "TestWebApi", Version = "v1"});
             });
         }
 
@@ -57,26 +61,17 @@ namespace MultiplatformBot
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            if (!env.IsDevelopment())
-            {
-                app.UseSpaStaticFiles();
-            }
+            
+            
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestWebApi v1"));
 
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             app.UseStaticFiles();
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-            });
         }
     }
 }
