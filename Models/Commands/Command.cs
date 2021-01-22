@@ -2,7 +2,12 @@
 {
     public abstract class Command
     {
-        public abstract string Arguments { get; set; }
+        protected Command(string[]? arguments)
+        {
+            Arguments = arguments;
+        }
+
+        protected string[]? Arguments { get; }
         
         
         public abstract void Execute();

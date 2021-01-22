@@ -1,18 +1,20 @@
-﻿namespace MultiplatformBot.Models.Commands.Vk
+﻿using System;
+using System.Linq;
+using VkNet;
+using VkNet.Model.RequestParams;
+
+namespace MultiplatformBot.Models.Commands.Vk
 {
     public sealed class Test : VkCommand
     {
-        public Test(string arguments)
+        public Test(string[]? argument, VkConversation vkConversation) : base(argument, vkConversation)
         {
-            Arguments = arguments;
         }
-        
-        public override string Arguments { get; set; }
+
+
         public override void Execute()
         {
-            
-            
-            throw new System.NotImplementedException("Test Exception");
+            throw new NotImplementedException();
         }
     }
 }

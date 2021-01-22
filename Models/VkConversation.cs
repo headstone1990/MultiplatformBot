@@ -1,63 +1,65 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using MultiplatformBot.Models.Commands.Vk;
-using VkNet.Model;
+using VkNet.Abstractions;
 
 namespace MultiplatformBot.Models
 {
     public sealed class VkConversation : Conversation
     {
-        
-        public VkConversation(long vkId)
+        public IVkApi VkApi { get; }
+
+
+        public VkConversation(long vkId, IVkApi vkApi)
         {
             VkId = vkId;
-            messages = new LinkedList<VkNet.Model.Message>();
-            commands = new LinkedList<VkNet.Model.Message>();
-        }
-
-        public override int Id { get; protected init; }
-
-        public long VkId { get; private init; }
-
-        private LinkedList<VkNet.Model.Message> messages;
-        private LinkedList<VkNet.Model.Message> commands;
-
-
-
-        public void AddMessage(VkNet.Model.Message message)
-        {
-            messages.AddFirst(message);
-            if (messages.Count > 100)
-            {
-                messages.RemoveLast();
-            }
+            Messages = new LinkedList<VkMessage>();
+            this.VkApi = vkApi;
         }
         
-        public void AddCommand(VkNet.Model.Message command)
+        // ReSharper disable UnusedMember.Local
+        private VkConversation(DbContext context) // Used by EF
+            // ReSharper restore UnusedMember.Local
         {
-            ParseCommand(command);
-                commands.AddFirst(command);
-            if (commands.Count > 100)
-            {
-                commands.RemoveLast();
-            }
-        }
-
-        private void ParseCommand(VkNet.Model.Message command)
-        {
-            if (command.Text == "!test")
-            {
-                var commandInstance = new Test(command.Text);
-                commandInstance.Execute();
-            }
-            else if(command.Text.Contains("GetLastCommands"))
-            {
-                
-            }
-            else
-            {
-                AddMessage(command);
-            }
+            VkApi = context.Database.GetService<IVkApi>();
+            Messages = new LinkedList<VkMessage>();
         }
         
+        
+        public override int Id { get; protected init; } //init Used by EF
+
+        // ReSharper disable AutoPropertyCanBeMadeGetOnly.Local
+        public long VkId { get; private init; } //init Used by EF
+        // ReSharper restore AutoPropertyCanBeMadeGetOnly.Local
+
+
+        [NotMapped]
+        public LinkedList<VkMessage> Messages { get; }
+
+
+        public void ParseMessage(VkNet.Model.Message apiMessage)
+        {
+            if (apiMessage.ConversationMessageId == null || apiMessage.FromId == null) return;
+
+            var conversationMessageId = apiMessage.ConversationMessageId.Value;
+            var fromId = apiMessage.FromId.Value;
+
+            Messages.AddFirst(new VkMessage(conversationMessageId, fromId));
+
+            if (Messages.Count > 100) Messages.RemoveLast();
+
+            if (string.IsNullOrEmpty(apiMessage.Text)) return;
+
+
+            string trimmedText = apiMessage.Text.Trim();
+            if (trimmedText[0] == '!')
+            {
+                var command = VkCommand.ParseCommand(trimmedText, this);
+                if (command == null) return;
+                command.Execute();
+            }
+        }
     }
 }

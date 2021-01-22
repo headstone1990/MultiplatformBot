@@ -26,6 +26,7 @@ namespace MultiplatformBot.Controllers
             this.db = db;
             this.vkApi = vkApi;
         }
+        
 
         //private List<VkConversation> chats = new();
 
@@ -38,28 +39,44 @@ namespace MultiplatformBot.Controllers
                 {
                     return Ok(configuration["Config:Confirmation"]);
                 }
-
+        
                 case "message_new":
                 {
                     var response = new VkResponse(updates.Object);
                     var message = VkNet.Model.Message.FromJson(response);
                     var clientInfo = ClientInfo.FromJson(response);
-                    if (message.PeerId == null)
+                    try
                     {
-                        throw new NullReferenceException("Message PeerId is null");
+                        if (message.PeerId == null)
+                        {
+                            throw new NullReferenceException("Message PeerId is null");
+                        }
+                
+                        var peerId = message.PeerId.Value;
+                        var conversation = Enumerable.FirstOrDefault(db.VkConversations, dbConversation => dbConversation.VkId == peerId);
+
+                        if (conversation == null)
+                        {
+                            conversation = new VkConversation(peerId, vkApi);
+                            db.VkConversations.Add(conversation);
+                            db.SaveChanges();
+                        }
+                    
+
+                    
+                        conversation.ParseMessage(message);
                     }
-
-                    var peerId = message.PeerId.Value;
-                    VkConversation conversation = null!;
-
-                    foreach (var dbConversation in db.VkConversations)
+                    catch (Exception exception)
                     {
-                        if (dbConversation.VkId != peerId) continue;
-                        conversation = dbConversation;
-                        break;
+                        Console.WriteLine(exception);
+                        vkApi.Messages.Send(new MessagesSendParams()
+                        {
+                            RandomId = new DateTime().Millisecond,
+                            PeerId = message.PeerId.GetValueOrDefault(),
+                            Message = exception.ToString()
+                        });
                     }
-                    conversation ??= new VkConversation(peerId);
-
+        
                     // try
                     // {
                     //    if (chats.All(chat => chat.Id != message.PeerId))
@@ -81,41 +98,9 @@ namespace MultiplatformBot.Controllers
                     break;
                 }
             }
-
+        
             return Ok("ok");
         }
-
-        // private bool IsNewConversation(long? messagePeerId)
-        // {
-        //     foreach (var conversation in db.Conversations)
-        //     {
-        //         if (conversation is not VkConversation vkConversation) continue;
-        //         if (vkConversation.VkId == messagePeerId)
-        //         {
-        //             return false;
-        //         }
-        //     }
-        //
-        //     return true;
-        // }
-
-        // private void ParseMessage(VkNet.Model.Message message)
-        // {
-        //     var text = message.Text.Trim();
-        //     var chat = chats.FirstOrDefault(e => e.Id == message.PeerId);
-        //     if (string.IsNullOrEmpty(text))
-        //     {
-        //         return;
-        //     }
-        //     if (text[0] == '!')
-        //     {
-        //         chat?.AddCommand(message);
-        //     }
-        //     else
-        //     {
-        //         chat?.AddMessage(message);
-        //     }
-        // }
 
         private void SendResponse(VkNet.Model.Message message, string text)
         {
